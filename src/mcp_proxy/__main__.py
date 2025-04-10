@@ -38,6 +38,7 @@ def main() -> None:
             "  mcp-proxy --sse-port 8080 -- your-command --arg1 value1 --arg2 value2\n"
             "  mcp-proxy your-command --sse-port 8080 -e KEY VALUE -e ANOTHER_KEY ANOTHER_VALUE\n"
             "  mcp-proxy your-command --sse-port 8080 --allow-origin='*'\n"
+            "  mcp-proxy your-command --sse-uds /tmp/mcp.sock\n"
         ),
         formatter_class=argparse.RawTextHelpFormatter,
     )
@@ -98,6 +99,11 @@ def main() -> None:
         help="Host to expose an SSE server on. Default is 127.0.0.1",
     )
     sse_server_group.add_argument(
+        "--sse-uds",
+        default=None,
+        help="UNIX Domain Socket to expose an SSE server on. Default is None",
+    )
+    sse_server_group.add_argument(
         "--allow-origin",
         nargs="+",
         default=[],
@@ -142,6 +148,7 @@ def main() -> None:
     sse_settings = SseServerSettings(
         bind_host=args.sse_host,
         port=args.sse_port,
+        uds=args.sse_uds,
         allow_origins=args.allow_origin if len(args.allow_origin) > 0 else None,
     )
     asyncio.run(run_sse_server(stdio_params, sse_settings))

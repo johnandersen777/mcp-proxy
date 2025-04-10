@@ -111,6 +111,7 @@ Arguments
 | `command_or_url`     | Yes                        | The command to spawn the MCP stdio server                        | uvx mcp-server-fetch  |
 | `--sse-port`         | No, random available       | The SSE server port to listen on                                 | 8080                  |
 | `--sse-host`         | No, `127.0.0.1` by default | The host IP address that the SSE server will listen on           | 0.0.0.0               |
+| `--sse-uds`          | No                         | The UNIX Domain Socket that the SSE server will listen on        | /tmp/mcp.sock         |
 | `--env`              | No                         | Additional environment variables to pass to the MCP stdio server | FOO=BAR               |
 | `--pass-environment` | No                         | Pass through all environment variables when spawning the server  | --no-pass-environment |
 | `--allow-origin`     | No                         | Pass through all environment variables when spawning the server  | --allow-cors "\*"     |
@@ -128,6 +129,9 @@ mcp-proxy --sse-port=8080 uvx mcp-server-fetch
 
 # Start the MCP server behind the proxy with a custom host and port
 mcp-proxy --sse-host=0.0.0.0 --sse-port=8080 uvx mcp-server-fetch
+
+# Start the MCP server behind the proxy bound to a UNIX Domain Socket
+mcp-proxy --sse-uds /tmp/mcp.sock uvx mcp-server-fetch
 
 # Start the MCP server behind the proxy with a custom user agent
 # Note that the `--` separator is used to separate the `mcp-proxy` arguments from the `mcp-server-fetch` arguments

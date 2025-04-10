@@ -23,6 +23,7 @@ class SseServerSettings:
 
     bind_host: str
     port: int
+    uds: str | None = None
     allow_origins: list[str] | None = None
     log_level: Literal["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"] = "INFO"
 
@@ -90,12 +91,19 @@ async def run_sse_server(
             debug=(sse_settings.log_level == "DEBUG"),
         )
 
+        config_kwargs = {}
+
+        if sse_settings.uds:
+            config_kwargs["uds"] = sse_settings.uds
+        else:
+            config_kwargs["host"] = sse_settings.bind_host
+            config_kwargs["port"] = sse_settings.port
+
         # Configure HTTP server
         config = uvicorn.Config(
             starlette_app,
-            host=sse_settings.bind_host,
-            port=sse_settings.port,
             log_level=sse_settings.log_level.lower(),
+            **config_kwargs,
         )
         http_server = uvicorn.Server(config)
         await http_server.serve()
